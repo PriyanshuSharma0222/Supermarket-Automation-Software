@@ -24,8 +24,9 @@ import { useNavigate } from "react-router-dom";
 const defaultTheme = createTheme();
 
 export default function SignUpSide() {
-  const {showSnackbar}=useSnackbar();
   const navigate=useNavigate();
+  const {showSnackbar}=useSnackbar();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -46,7 +47,6 @@ export default function SignUpSide() {
     }catch(err){
       showSnackbar(err.response.data.message,"error");
     }
-
   };
 
   return (
@@ -81,19 +81,9 @@ export default function SignUpSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h4">
-              Sign Up
+              Register
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                autoFocus
-              />
                <TextField
                 margin="normal"
                 required
@@ -108,10 +98,20 @@ export default function SignUpSide() {
                 margin="normal"
                 required
                 fullWidth
-                name="password"
-                label="Password"
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+              />
+              <TextField
+                margin="normal"
                 type="password"
+                required
+                fullWidth
                 id="password"
+                label="Password"
+                name="password"
                 autoComplete="current-password"
               />
               
@@ -121,7 +121,7 @@ export default function SignUpSide() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign Up
+                Register
               </Button>
               <Grid container>
                 <Grid item>

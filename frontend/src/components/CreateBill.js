@@ -1,74 +1,75 @@
-import React, { useEffect, useState ,useRef} from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import '../styles/CreateBill.css'
 import BillItemCard from './BillItemCard'
 import axios from 'axios';
 import 'jspdf-autotable';
 import { useSnackbar } from './SnackbarContext';
 import { useNavigate } from 'react-router-dom';
-
+import { Button, TextField } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 
 export default function CreateBill() {
-  const navigate=useNavigate();
-  useEffect(()=>{
-    if(!localStorage.getItem("token")){
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
       navigate('/login');
     }
-    const user=JSON.parse(localStorage.getItem('user'));
-    if(user&&user.isManager){
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.isManager) {
       navigate('/login');
     }
-    
-  },[]);
 
-  const [billItems,setBillItems]=useState([]);
-  const [qty,setQty]=useState(null);
-  const [code,setCode]=useState(null);
-  const [customerName,setCustomerName]=useState(null);
-  const [customerPhone,setCustomerPhone]=useState(null);
+  }, []);
+
+  const [billItems, setBillItems] = useState([]);
+  const [qty, setQty] = useState(null);
+  const [code, setCode] = useState(null);
+  const [customerName, setCustomerName] = useState(null);
+  const [customerPhone, setCustomerPhone] = useState(null);
   const codeInputRef = useRef(null);
   const qtyInputRef = useRef(null);
   const nameInputRef = useRef(null);
   const phoneInputRef = useRef(null);
 
-  const {showSnackbar}=useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
-  const onAddClick=async ()=>{
-    if(qty==null||setCode==null||qty==0) return ;
+  const onAddClick = async () => {
+    if (qty == null || setCode == null || qty == 0) return;
     // check whether code is valid or not
-    try{
-      const token=localStorage.getItem("token");
-      const res=await axios.get("http://localhost:8000/product/get-itemByCode",{        
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:8000/product/get-itemByCode", {
         params: { code: code },
-        headers:{
+        headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      if(res.status==200){
-        const itemsArr=billItems;
+      if (res.status == 200) {
+        const itemsArr = billItems;
         // console.log(res.data);
-        const newItem={
-          code:res.data.code,
-          name:res.data.name,
-          price:res.data.unitPrice,
-          qty:qty,
-          totalPrice:(res.data.unitPrice)*(qty)
+        const newItem = {
+          code: res.data.code,
+          name: res.data.name,
+          price: res.data.unitPrice,
+          qty: qty,
+          totalPrice: (res.data.unitPrice) * (qty)
         }
         itemsArr.push(newItem);
         setBillItems(itemsArr);
-        
+
         console.log(billItems);
-      }else if(res.status==204){
-        showSnackbar("Incorrect Code","error");
-      }else{
-        showSnackbar("Internal server error","error");
+      } else if (res.status == 204) {
+        showSnackbar("Incorrect Code", "error");
+      } else {
+        showSnackbar("Internal server error", "error");
       }
       setQty(null);
       setCode(null);
-      codeInputRef.current.value='';
-      qtyInputRef.current.value='';
-    }catch(err){
-     return console.log(err);
+      codeInputRef.current.value = '';
+      qtyInputRef.current.value = '';
+    } catch (err) {
+      return console.log(err);
     }
   }
 
@@ -76,59 +77,59 @@ export default function CreateBill() {
     setBillItems(billItems.filter(item => item !== itemToDelete));
   };
 
-  const generatePDF =async () => {
-    if(customerName==null||customerPhone==null||billItems.length==0){
-      showSnackbar("All details not provided","warning");
+  const generatePDF = async () => {
+    if (customerName == null || customerPhone == null || billItems.length == 0) {
+      showSnackbar("All details not provided", "warning");
       return;
     }
     // 
-   
+
     // Set up columns and rows
     const columns = ["Code", "Name", "Rate", "Quantity", "Total"];
-    const rows = billItems.map(item => [item.code, item.name,'&#8377; ' +item.price, item.qty,'&#8377; ' + item.totalPrice]);
-  
+    const rows = billItems.map(item => [item.code, item.name, '&#8377; ' + item.price, item.qty, '&#8377; ' + item.totalPrice]);
+
     // Calculate the total payable amount
     const totalPayable = billItems.reduce((sum, item) => sum + item.totalPrice, 0);
 
 
 
-        // we also have to store this trnsaction
-        let transactionId;
+    // we also have to store this trnsaction
+    let transactionId;
 
-          try{
-            const token=localStorage.getItem("token");
-            const res= await axios.post("http://localhost:8000/product/create-transaction",{billItems:billItems,customerName:customerName,customerPhone:customerPhone},{
-              headers:{
-                'Authorization': `Bearer ${token}`
-              }
-            });
-            // console.log(res.data);
-            transactionId=res.data._id;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post("http://localhost:8000/product/create-transaction", { billItems: billItems, customerName: customerName, customerPhone: customerPhone }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      // console.log(res.data);
+      transactionId = res.data._id;
 
-           }catch(err){
-             return console.log(err);
-           }
-       
-           // decrease the qty present
-           try{
-            const token=localStorage.getItem("token");
-            for(let item of billItems){
-              const res=await axios.post("http://localhost:8000/product/decrease-quantity",{code:item.code,quantity:item.qty},{
-                headers:{
-                  'Authorization': `Bearer ${token}`
-                }
-              });
-              // console.log(res.data);
-            }
-           }catch(err){
-            return console.log(err);
-           }
-          
+    } catch (err) {
+      return console.log(err);
+    }
+
+    // decrease the qty present
+    try {
+      const token = localStorage.getItem("token");
+      for (let item of billItems) {
+        const res = await axios.post("http://localhost:8000/product/decrease-quantity", { code: item.code, quantity: item.qty }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        // console.log(res.data);
+      }
+    } catch (err) {
+      return console.log(err);
+    }
+
 
     // await addTransactionToDb();
 
     // Create a printable HTML content
-    const styleOfPdf=`<style>
+    const styleOfPdf = `<style>
     table {
       width: 100%;
       border-collapse: collapse;
@@ -175,7 +176,7 @@ export default function CreateBill() {
       color: #2E5C8A;
     }
   </style>`;
-    
+
     const printableContent = `
       <p>Bill Details</p>
       <div class='header'>
@@ -208,12 +209,12 @@ export default function CreateBill() {
         <p>Visit again</p>
       </div>
     `;
-  
+
     // Create a hidden iframe
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
     document.body.appendChild(iframe);
-  
+
     // Inject the printable content into the iframe
     const iframeDocument = iframe.contentWindow.document;
     iframeDocument.open();
@@ -230,99 +231,151 @@ export default function CreateBill() {
       </html>
     `);
     iframeDocument.close();
-  
+
     // Print the content
     iframe.contentWindow.print();
-  
+
     // Remove the iframe after printing
     setTimeout(() => {
       document.body.removeChild(iframe);
     }, 1000); // Adjust the delay as needed
     setBillItems([]);
 
-    nameInputRef.current.value='';
-    phoneInputRef.current.value='';
+    nameInputRef.current.value = '';
+    phoneInputRef.current.value = '';
     setCustomerName(null);
     setCustomerPhone(null);
 
 
   };
-  
+
 
   return (
-
-    
     <div>
       <div className="main-container-create-bill">
         <div className="left-container">
-          <div className="add-item">
-            <input 
-            type='number'
-            placeholder='Code'
-            ref={codeInputRef} 
-            className='bill-input'onChange={(e)=>{
-              setCode(e.target.value);
-            }} ></input>
-            <input
-            type='number' 
-            placeholder='Quantity' 
-            className='bill-input' 
-            ref={qtyInputRef} 
-            onChange={(e)=>{
-              setQty(e.target.value);
-            }}></input>
-            <button className='add-btn' onClick={onAddClick} >Add</button>
-          </div>
+
           <div className="customer-details">
-            <input
-            type='text'
-            placeholder='customer-name'
-            className='customer-details-input'
-            ref={nameInputRef}
-            onChange={(e)=>{
-              setCustomerName(e.target.value);
-            }}
-            >
-            </input>
-            <input
-            type='number'
-            placeholder='Mobile number'
-            className='customer-details-input'
-            ref={phoneInputRef}
-            onChange={(e)=>{
-              setCustomerPhone(e.target.value);
-            }}
-            >
-            </input>
+            <div className="block-heading">
+              <Typography>
+                Customer Details
+              </Typography>
+            </div>
+            <div className="customer-details-section">
+            <TextField
+              type='text'
+              id="Customer Name"
+              label="Customer Name"
+              name="Customer Name"
+              className='customer-details-input'
+              ref={nameInputRef}
+              onChange={(e) => {
+                setCustomerName(e.target.value);
+              }}
+            />
+            <TextField
+              id="Mobile Number"
+              label="Mobile Number"
+              name="Mobile Number"
+              className='customer-details-input'
+              ref={phoneInputRef}
+              onChange={(e) => {
+                setCustomerPhone(e.target.value);
+              }}
+            />
           </div>
-          <button 
-          className='generate-bill'
-          onClick={generatePDF}
-          >Generate bill</button>
+          </div>
+          <div className="add-item">
+            <div className="block-heading">
+              <Typography>
+                Add Items
+              </Typography>
+            </div>
+            <div className='add-item-upper'>
+              <TextField
+                type="number"
+                ref={codeInputRef}
+                id="Item Code"
+                label="Item Code"
+                name="Item Code"
+                className="bill-input"
+                onChange={(e) => {
+                  setCode(e.target.value);
+                }}
+              />
+              {/* <input
+              type='number'
+              placeholder='Code'
+              ref={codeInputRef}
+              className='bill-input' onChange={(e) => {
+                setCode(e.target.value);
+              }} ></input> */}
+              <TextField
+                type='number'
+                id="Quantity"
+                label="Quantity"
+                name="Quantity"
+                className='bill-input'
+                ref={qtyInputRef}
+                onChange={(e) => {
+                  setQty(e.target.value);
+                }} />
+            </div>
+            <div className='add-item-lower'>
+              {/* <button className='add-btn' onClick={onAddClick} >Add</button> */}
+              <Button
+                className="button"
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={onAddClick}
+              >
+                Add Item
+              </Button>
+            </div>
+          </div>
+          {/* <button
+            className='generate-bill'
+            onClick={generatePDF}
+          >Generate bill</button> */}
+          <div className="generate-bill-section">
+
+            <Button
+              onClick={generatePDF}
+              className="button"
+              type="submit"
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Generate Bill
+            </Button>
+          </div>
         </div>
 
-        
 
+        
         <div className="right-container">
+          <Typography>
           <div className="parameter-para">
-            <p className='code-para'>Code</p>
-            <p className='name-para'>Name</p>
-            <p className='price-para'>Rate</p>
-            <p className='qty-para'>Quantity</p>
-            <p className='total-para'>Total </p>
+            <p className={`column-heading code-para`}>Code</p>
+            <p className={`column-heading name-para`}>Item Name</p>
+            <p className={`column-heading price-para`}>Price</p>
+            <p className={`column-heading qty-para`}>Quantity</p>
+            <p className={`column-heading total-para`}>Total </p>
           </div>
-          
+          </Typography>
 
           {
-            billItems.map((item,id)=>{
-              return <BillItemCard key={id} val={item} onDelete={handleDeleteItem}  />
+            billItems.map((item, id) => {
+              return <BillItemCard key={id} val={item} onDelete={handleDeleteItem} />
             })
           }
 
         </div>
+        
       </div>
 
-     
+
 
 
     </div>

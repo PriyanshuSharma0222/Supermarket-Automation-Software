@@ -1,12 +1,27 @@
+.navbar-container{
+    height: 7vh;
+}
+
 a{
     text-decoration: none;
     color: white !important;
-    padding: 15px;
-    height: 5vh;
+    border-radius: 7px;
+    margin: 10px;
+    padding: 5px 10px;
+}
+
+a:hover{
+    background-color: #433878;
 }
 
 .logout-btn{
     color: white !important;
-    margin-right: 2%;
+    margin: 10px !important;
+    padding: 5px 10px;
+}
+
+.logout-btn:hover{
+    border-radius: 7px;
+    background-color: #433878 !important;
 }
 

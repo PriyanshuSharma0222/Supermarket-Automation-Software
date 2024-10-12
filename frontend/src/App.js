@@ -22,7 +22,7 @@ function App() {
             <Route path='about' element={<AboutPage/>} />
           </Route>
           <Route path='/login' element={<SignInSide/>} />
-          <Route path='/signup' element={<SignUpSide/>} />
+          <Route path='/register' element={<SignUpSide/>} />
           <Route exact path='/' element={<Navigate to="/login" />} />
         </Routes>
       </SnackbarProvider>

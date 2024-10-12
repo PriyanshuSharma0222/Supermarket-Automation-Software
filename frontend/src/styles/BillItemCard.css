@@ -16,14 +16,14 @@
     margin-left: 1vw;
     width: 10%;
 }
-.qty-para{
-    width: 10%;
-}
 .name-para{
     width: 40%;
     
 }
 .price-para{
+    width: 15%;
+}
+.qty-para{
     width: 15%;
 }
 .total-para{

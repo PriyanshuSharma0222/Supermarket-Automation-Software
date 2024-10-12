@@ -13,22 +13,22 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import '../styles/Login.css'
 import img from '../images/img1.jpg'
-import { useSnackbar } from './SnackbarContext';
 import axios from 'axios';
+import { useSnackbar } from './SnackbarContext';
 import { useNavigate } from 'react-router-dom';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+// function Copyright(props) {
+//   return (
+//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
+//       {'Copyright © '}
+//       <Link color="inherit" href="https://mui.com/">
+//         Your Website
+//       </Link>{' '}
+//       {new Date().getFullYear()}
+//       {'.'}
+//     </Typography>
+//   );
+// }
 
 
 
@@ -39,9 +39,11 @@ const defaultTheme = createTheme();
 export default function SignInSide() {
   const navigate=useNavigate();
   const {showSnackbar}=useSnackbar();
-  const handleSubmit =async (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    
     const reqData={
       username:data.get('username'),
       password:data.get('password'),
@@ -55,13 +57,10 @@ export default function SignInSide() {
         localStorage.setItem("user",JSON.stringify(res.data.user));
         if(res.data.user.isManager) navigate('/app/all-items');
         else navigate('/app/generate-bill');
-        
       }catch(err){
         // console.log(err.response.data)
         showSnackbar(err.response.data.message,"error");
       }
-
-   
   };
 
   return (
@@ -96,10 +95,9 @@ export default function SignInSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h4">
-              Sign in
+              Sign In
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            
               <TextField
                 margin="normal"
                 required
@@ -131,8 +129,8 @@ export default function SignInSide() {
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link href="signup" variant="body2" id='link-alt'  sx={{ color: 'blue' }} >
-                    {"Don't have an account? Sign Up"}
+                  <Link href="register" variant="body2" id='link-alt'  sx={{ color: 'blue' }} >
+                    {"Don't have an account? Register"}
                   </Link>
                 </Grid>
               </Grid>
