@@ -1,5 +1,6 @@
 .navbar-container{
     height: 7vh;
+    min-height: max-content;
 }
 
 a{

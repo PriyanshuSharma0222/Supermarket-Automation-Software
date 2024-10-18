@@ -81,7 +81,7 @@ export default function SignInSide() {
             backgroundPosition: 'center',
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6}>
           <Box
             sx={{
               my: 8,
@@ -129,7 +129,7 @@ export default function SignInSide() {
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link href="register" variant="body2" id='link-alt'  sx={{ color: 'blue' }} >
+                  <Link href="register" variant="body2" id='link-alt'>
                     {"Don't have an account? Register"}
                   </Link>
                 </Grid>

@@ -13,6 +13,7 @@ import Alert from '@mui/material/Alert';
 import AddStockModalBox from './AddStockModalBox';
 import UpdatePriceModalBox from './UpdatePriceModalBox';
 import GetStatsModal from './GetStatsModal';
+import { Button } from '@mui/material';
 
 
 export default function ItemCard(props) {
@@ -58,16 +59,16 @@ export default function ItemCard(props) {
          <div className="card-item">
             <img src={props.imageSrc} alt="" className='card-media'/>
             <div className="text">
-                <p style={{color:'#1F62FF'}}>{props.name}</p>
-                <p><strong>code: </strong>{props.code}</p>
-                <p> {props.unitPrice} Rs</p>
+                <p style={{'font-weight':'bold', 'fontSize':'20px', 'color':'#7E60BF'}}>{props.name}</p>
+                <p>Item Code: <strong> {props.code} </strong></p>
+                <p>Price: <strong> Rs. {props.unitPrice}</strong></p>
             </div>
             <div className="update-buttons">
               {/* <input type="number" className='qty' placeholder='quantity' /> */}
-              <button className='btn' onClick={handleOpenStock} > Add Stock </button>
-              <button className='btn' onClick={handleOpen}> Update Price</button>
+              <Button className='btn' onClick={handleOpenStock} > Add Stock </Button>
+              <Button className='btn' onClick={handleOpen}> Update Price</Button>
             </div>
-            <button className='btn-stats' onClick={handleOpenStats}>Get Stats</button>
+            <Button className='btn-stats' onClick={handleOpenStats}>Get Stats</Button>
             
         </div>
 

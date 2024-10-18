@@ -158,16 +158,32 @@ export default function AllItems() {
 
 
   return (
-    <div>
+    <div className='root'>
 
-      <div className="search-box" onChange={(e)=>{
-        setSearchText(e.target.value);
-      }} >
-        <button 
+      <div className="search-box">
+        {/* <button 
         className='bill-btn'
         onClick={handleOpen}
-        >Add new Item</button>
-        <input type="text" className='right-item' placeholder='Search box' />
+        >Add new Item</button> */}
+        {/* <input type="text" className='right-item' placeholder='Search box' /> */}
+        <Button
+          className="bill-btn"
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+          onClick={handleOpen}
+        >
+          Add New Item
+        </Button>
+        <TextField
+          type="text"
+          id="Search"
+          label="Search"
+          name="Search"
+          className="right-item"
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+        />
       </div>
 
       {/* All items */}

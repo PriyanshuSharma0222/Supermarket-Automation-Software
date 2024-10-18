@@ -3,7 +3,7 @@
     margin: 0;
     width: 100vw;
     padding: 0;
-    height: 93vh;
+    min-height: 93vh;
     background-color: white;
 }
 
